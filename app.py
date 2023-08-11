@@ -11,10 +11,7 @@ from langchain.chat_models import ChatOpenAI
 from langchain.prompts import PromptTemplate
 from langchain.sql_database import SQLDatabase
 from prompts import prefix
-from dotenv import load_dotenv
-load_dotenv()
 from secret_key import openai_key
-
 template = """Question: {question}
 
 Answer: Let's think step by step."""
