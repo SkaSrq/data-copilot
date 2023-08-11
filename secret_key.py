@@ -1,0 +1,2 @@
+openai_key="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"
+serp_api_key="6ee564682061ed4d2b9fc8e076e320e605ee52aca359901a12e4791ad8a6a882"
