@@ -12,10 +12,6 @@ from table_info import custom_table_info
 load_dotenv()
 def agent_factory():
     llm = ChatOpenAI(model_name="gpt-3.5-turbo", temperature=0, openai_api_key=os.getenv("OPENAI_API_KEY"))
-    # db_user = "admin"
-    # db_password = "Admin123"
-    # db_host = "unremot-db.ci4i0mtcvbbw.ap-southeast-2.rds.amazonaws.com"
-    # db_name = "data_copilot"
     db = SQLDatabase.from_uri(os.getenv("DATABASE_URL"),
                               include_tables=['products'],
                               sample_rows_in_table_info=3,
