@@ -1,2 +1,2 @@
-openai_key="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"
+openai_key="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"
 serp_api_key="6ee564682061ed4d2b9fc8e076e320e605ee52aca359901a12e4791ad8a6a882"

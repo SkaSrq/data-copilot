@@ -124,3 +124,14 @@ async def main(message: str):
     # resp = agent_executor.run(message)
     final_message = cl.Message(content=resp)
     await final_message.send()
+
+
+# prompt = '''
+#     Average order value or AoV is  the average value of an order, calculated as (Sum of all order value / Number of orders), Average product value is (Sum of all order value / Number of products sold)
+#                 For order value we use Gross revenue (both repeat and acquisition) and quantity is the quantity of products.
+#                 '''
+#     acq='''acquisition is column name start with acq '''
+#     RS='''R/S or Revenue by spend is a metric used to understand the profitability of a particular product line, and is simply (Sum of net revenue / Sum of all marketing and branding spends) .'''
+#     cap='Whenever CAPSULES comes in product name then define this product is a capsule.'
+#     channel="""In the products database table, marketing or expense channels are represented using two distinct columns for each channel. These columns differentiate between costs associated with acquiring new customers (often prefixed with "acq_" or ending in "new") and costs associated with retaining existing or old customers (often prefixed with "rep" or ending in "_repeat"). Columns associated with acquiring new customers typically have a name ending in "new_spend" or start with "acq".
+# Columns associated with retaining old customers typically have a name ending in "repeat_spend" or start with "rep"""

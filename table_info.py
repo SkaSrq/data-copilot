@@ -1,9 +1,48 @@
-custom_table_info={"products":
-                       """CREATE TABLE products (
+table_info="""acq_mrp_revenue: Revenue generated from new customer acquisitions (acq) based on the maximum retail price (MRP).
+rep_mrp_revenue: Revenue generated from repeat customers (rep) based on the maximum retail price (MRP).
+acq_item_discount: Discount provided to new customers (acq) on individual items.
+rep_item_discount: Discount provided to repeat customers (rep) on individual items.
+acq_listing_discount_uc: Listing discount for new customer acquisitions (acq) in unconverted currency.
+rep_listing_discount_uc: Listing discount for repeat customers (rep) in unconverted currency.
+acq_gross_revenue: Gross revenue from new customer acquisitions (acq).
+rep_gross_revenue: Gross revenue from repeat customers (rep).
+acq_net_revenue: Net revenue from new customer acquisitions (acq).
+rep_net_revenue: Net revenue from repeat customers (rep).
+acq_quantity: Quantity of products sold to new customers (acq).
+rep_quantity: Quantity of products sold to repeat customers (rep).
+acq_cogs: Cost of goods sold for new customer acquisitions (acq).
+rep_cogs: Cost of goods sold for repeat customers (rep).
+acq_logs: Logs related to new customer acquisitions (acq).
+rep_logs: Logs related to repeat customers (rep).
+hct_acq_final_spend: Final spend for new customer acquisitions (acq) related to hct (unclear abbreviation).
+hct_repeat_final_spend: Final spend for repeat customers (rep) related to hct (unclear abbreviation).
+doc_new_spend: New spend on doctor-related activities for new customers (acq).
+doc_rep_spend: Spend on doctor-related activities for repeat customers (rep).
+acq_influencer_spend: Spend on influencers for new customer acquisitions (acq).
+repeat_influencer_spend: Spend on influencers for repeat customers (rep).
+acq_content_marketing_spend: Spend on content marketing for new customer acquisitions (acq).
+repeat_content_marketing_spend: Spend on content marketing for repeat customers (rep).
+FB_Acq_Spend: Spend on Facebook advertising for new customer acquisitions (acq).
+FB_Repeat_Spend: Spend on Facebook advertising for repeat customers (rep).
+Aff_New_Spend: Spend on affiliate marketing for new customer acquisitions (acq).
+Aff_Repeat_Spend: Spend on affiliate marketing for repeat customers (rep).
+Partnership_New_spend: Spend on partnerships for new customer acquisitions (acq).
+Partnership_Repeat_spend: Spend on partnerships for repeat customers (rep).
+acq_non_working_spend: Non-working spend for new customer acquisitions (acq).
+repeat_non_working_spend: Non-working spend for repeat customers (rep).
+google_acq_spend: Spend on Google advertising for new customer acquisitions (acq).
+google_repeat_spend: Spend on Google advertising for repeat customers (rep).
+crm_new_spend: Spend on customer relationship management for new customer acquisitions (acq).
+crm_repeat_spend: Spend on customer relationship management for repeat customers (rep)."""
+
+
+custom_table_info={
+    "products":
+                       f"""CREATE TABLE "products" (
                                         "date_created" DATETIME,
                                         "name" TEXT,
                                         "therapy" TEXT,
-                                        "group" TEXT,
+                                        "_group" TEXT,
                                         "type" TEXT,
                                         "acq_mrp_revenue" DOUBLE,
                                         "rep_mrp_revenue" DOUBLE,
@@ -50,40 +89,18 @@ date_created	name	therapy	group	type	acq_mrp_revenue	rep_mrp_revenue	acq_item_di
 2023-07-15 00:00:00	KAPIVA HIM FOODS SHILAJIT GOLD RESIN - 20G	Mens Health	HPC	Ingestibles	304031.0000000000	221277.0000000000	18037.0000000000	14885.0000000000	64343.0000000000	54066.0000000000	204361.0000000000	143713.0000000000	151321.5100000000	113518.0500000000	140	109	35435.4000000000	27588.9900000000	4613.1114620000	2784.1052820000	6662.0877010000	6124.0523000000	343.7716898000	929.1938266000	0E-10	0E-10	0E-10	0E-10	69626.4000000000	17406.6000000000	9313.3902930000	3137.2229570000	3829.1370000000	1181.6130500000	14145.6000000000	3536.4000000000	24823.3600000000	6205.8400000000	1569.8825230000	0E-10
 2023-07-15 00:00:00	KAPIVA HIMALAYA SHILAJIT 30 GRAMS	Mens Health	HPC	Ingestibles	102851.0000000000	18891.0000000000	4165.0000000000	648.0000000000	33150.0000000000	6863.0000000000	56453.0000000000	10530.0000000000	42424.7600000000	8839.0500000000	39	8	10733.9700000000	2201.8400000000	1745.3520000000	313.8668000000	0E-10	0E-10	589.7909705000	0E-10	0E-10	0E-10	0E-10	0E-10	0E-10	0E-10	1996.5259360000	207.5743673000	1644.4855000000	0E-10	0E-10	0E-10	0E-10	0E-10	0E-10	0E-10
 */
+/*
+things to understand before writing any SQL query:
+1. Average order value or AoV is  the average value of an order, calculated as (Sum of all order value by Number of orders), Average product value is (Sum of all order value by Number of products sold). For order value we use Gross revenue (both repeat and acquisition) and quantity is the quantity of products (both repeat and acquisition).
+2. Marketing or expense channels are represented using two distinct columns for each channel. some example channels - channel like facebook channal is FB_Acq_Spend + FB_Repeat_Spend, Affiliate channel is Aff_New_Spend + Aff_Repeat_Spend, similarly hct_acq_final_spend + hct_repeat_final_spend is HCT channel.
+3. When you need to find which channel then check all possible channels according to table schema.
+4. Whenever CAPS comes in product name then define this product is a capsule.
+5. In the products database table, Every marketing spend is a channel like facebook marketing FB_Acq_Spend, FB_Repeat_Spend these two columns are one channel simlarly Aff_New_Spend,Aff_Repeat_Spend is one channel of Affiliate matketing, There are multiple channels.
+6. Columns associated with retaining old customers typically have a name ending in "repeat_spend" or start with 'rep'.
+7. R/S or Revenue by spend is a metric used to understand the profitability of a particular product line, and is simply (Sum of net revenue by Sum of all marketing and branding spends) .
+8. CM1 (Contribution Margin 1): It is calculated by subtracting the Cost of Goods Sold (COGS) and Logs from the Net Revenue.
+9. Channel Marketing Spends: It is the sum of spends related to various marketing channels like Facebook, Affiliate marketing, Partnerships, Google advertising, CRM, etc.
+10. CM2 (Contribution Margin 2): It is derived by subtracting the Channel Marketing Spends from CM1.
+11. Brand Spends: It represents the sum of spends related to influencer marketing, content marketing, and non-working spends.
+12. CM3 (Contribution Margin 3): It is calculated by subtracting the Brand Spends from CM2.
 """}
-table_info="""acq_mrp_revenue: Revenue generated from new customer acquisitions (acq) based on the maximum retail price (MRP).
-rep_mrp_revenue: Revenue generated from repeat customers (rep) based on the maximum retail price (MRP).
-acq_item_discount: Discount provided to new customers (acq) on individual items.
-rep_item_discount: Discount provided to repeat customers (rep) on individual items.
-acq_listing_discount_uc: Listing discount for new customer acquisitions (acq) in unconverted currency.
-rep_listing_discount_uc: Listing discount for repeat customers (rep) in unconverted currency.
-acq_gross_revenue: Gross revenue from new customer acquisitions (acq).
-rep_gross_revenue: Gross revenue from repeat customers (rep).
-acq_net_revenue: Net revenue from new customer acquisitions (acq).
-rep_net_revenue: Net revenue from repeat customers (rep).
-acq_quantity: Quantity of products sold to new customers (acq).
-rep_quantity: Quantity of products sold to repeat customers (rep).
-acq_cogs: Cost of goods sold for new customer acquisitions (acq).
-rep_cogs: Cost of goods sold for repeat customers (rep).
-acq_logs: Logs related to new customer acquisitions (acq).
-rep_logs: Logs related to repeat customers (rep).
-hct_acq_final_spend: Final spend for new customer acquisitions (acq) related to hct (unclear abbreviation).
-hct_repeat_final_spend: Final spend for repeat customers (rep) related to hct (unclear abbreviation).
-doc_new_spend: New spend on doctor-related activities for new customers (acq).
-doc_rep_spend: Spend on doctor-related activities for repeat customers (rep).
-acq_influencer_spend: Spend on influencers for new customer acquisitions (acq).
-repeat_influencer_spend: Spend on influencers for repeat customers (rep).
-acq_content_marketing_spend: Spend on content marketing for new customer acquisitions (acq).
-repeat_content_marketing_spend: Spend on content marketing for repeat customers (rep).
-FB_Acq_Spend: Spend on Facebook advertising for new customer acquisitions (acq).
-FB_Repeat_Spend: Spend on Facebook advertising for repeat customers (rep).
-Aff_New_Spend: Spend on affiliate marketing for new customer acquisitions (acq).
-Aff_Repeat_Spend: Spend on affiliate marketing for repeat customers (rep).
-Partnership_New_spend: Spend on partnerships for new customer acquisitions (acq).
-Partnership_Repeat_spend: Spend on partnerships for repeat customers (rep).
-acq_non_working_spend: Non-working spend for new customer acquisitions (acq).
-repeat_non_working_spend: Non-working spend for repeat customers (rep).
-google_acq_spend: Spend on Google advertising for new customer acquisitions (acq).
-google_repeat_spend: Spend on Google advertising for repeat customers (rep).
-crm_new_spend: Spend on customer relationship management for new customer acquisitions (acq).
-crm_repeat_spend: Spend on customer relationship management for repeat customers (rep)."""

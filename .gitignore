@@ -1,4 +1,4 @@
 .env
 venv/*
 .chainlit/.langchain.db
- __pycache__
+ __pycache__/
